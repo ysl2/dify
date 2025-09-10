@@ -78,6 +78,7 @@ from .auth import (
     login,  # pyright: ignore[reportUnusedImport]
     oauth,  # pyright: ignore[reportUnusedImport]
     oauth_server,  # pyright: ignore[reportUnusedImport]
+    email_register,  # pyright: ignore[reportUnusedImport]
 )
 
 # Import billing controllers
