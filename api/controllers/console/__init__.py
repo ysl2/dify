@@ -1,66 +1,3 @@
-from .workspace import (
-    account,  # pyright: ignore[reportUnusedImport]
-    agent_providers,  # pyright: ignore[reportUnusedImport]
-    endpoint,  # pyright: ignore[reportUnusedImport]
-    load_balancing_config,  # pyright: ignore[reportUnusedImport]
-    members,  # pyright: ignore[reportUnusedImport]
-    model_providers,  # pyright: ignore[reportUnusedImport]
-    models,  # pyright: ignore[reportUnusedImport]
-    plugin,  # pyright: ignore[reportUnusedImport]
-    tool_providers,  # pyright: ignore[reportUnusedImport]
-    workspace,  # pyright: ignore[reportUnusedImport]
-)
-from .tag import tags  # pyright: ignore[reportUnusedImport]
-from .explore import (
-    installed_app,  # pyright: ignore[reportUnusedImport]
-    parameter,  # pyright: ignore[reportUnusedImport]
-    recommended_app,  # pyright: ignore[reportUnusedImport]
-    saved_message,  # pyright: ignore[reportUnusedImport]
-)
-from .datasets import (
-    data_source,  # pyright: ignore[reportUnusedImport]
-    datasets,  # pyright: ignore[reportUnusedImport]
-    datasets_document,  # pyright: ignore[reportUnusedImport]
-    datasets_segments,  # pyright: ignore[reportUnusedImport]
-    external,  # pyright: ignore[reportUnusedImport]
-    hit_testing,  # pyright: ignore[reportUnusedImport]
-    metadata,  # pyright: ignore[reportUnusedImport]
-    website,  # pyright: ignore[reportUnusedImport]
-)
-from .billing import billing, compliance  # pyright: ignore[reportUnusedImport]
-from .auth import (
-    activate,  # pyright: ignore[reportUnusedImport]
-    data_source_bearer_auth,  # pyright: ignore[reportUnusedImport]
-    data_source_oauth,  # pyright: ignore[reportUnusedImport]
-    forgot_password,  # pyright: ignore[reportUnusedImport]
-    login,  # pyright: ignore[reportUnusedImport]
-    oauth,  # pyright: ignore[reportUnusedImport]
-    oauth_server,  # pyright: ignore[reportUnusedImport]
-)
-from .app import (
-    advanced_prompt_template,  # pyright: ignore[reportUnusedImport]
-    agent,  # pyright: ignore[reportUnusedImport]
-    annotation,  # pyright: ignore[reportUnusedImport]
-    app,  # pyright: ignore[reportUnusedImport]
-    audio,  # pyright: ignore[reportUnusedImport]
-    completion,  # pyright: ignore[reportUnusedImport]
-    conversation,  # pyright: ignore[reportUnusedImport]
-    conversation_variables,  # pyright: ignore[reportUnusedImport]
-    generator,  # pyright: ignore[reportUnusedImport]
-    mcp_server,  # pyright: ignore[reportUnusedImport]
-    message,  # pyright: ignore[reportUnusedImport]
-    model_config,  # pyright: ignore[reportUnusedImport]
-    ops_trace,  # pyright: ignore[reportUnusedImport]
-    site,  # pyright: ignore[reportUnusedImport]
-    statistic,  # pyright: ignore[reportUnusedImport]
-    workflow,  # pyright: ignore[reportUnusedImport]
-    workflow_app_log,  # pyright: ignore[reportUnusedImport]
-    workflow_draft_variable,  # pyright: ignore[reportUnusedImport]
-    workflow_run,  # pyright: ignore[reportUnusedImport]
-    workflow_statistic,  # pyright: ignore[reportUnusedImport]
-)
-# pyright: ignore[reportUnusedImport]
-from . import admin, apikey, extension, feature, ping, setup, version
 from flask import Blueprint
 
 from libs.external_api import ExternalApi
@@ -102,28 +39,73 @@ api.add_resource(RemoteFileUploadApi, "/remote-files/upload")
 
 # Import App
 api.add_resource(AppImportApi, "/apps/imports")
-api.add_resource(AppImportConfirmApi,
-                 "/apps/imports/<string:import_id>/confirm")
-api.add_resource(AppImportCheckDependenciesApi,
-                 "/apps/imports/<string:app_id>/check-dependencies")
+api.add_resource(AppImportConfirmApi, "/apps/imports/<string:import_id>/confirm")
+api.add_resource(AppImportCheckDependenciesApi, "/apps/imports/<string:app_id>/check-dependencies")
 
 # Import other controllers
+from . import admin, apikey, extension, feature, ping, setup, version  # pyright: ignore[reportUnusedImport]
 
 # Import app controllers
+from .app import (
+    advanced_prompt_template,  # pyright: ignore[reportUnusedImport]
+    agent,  # pyright: ignore[reportUnusedImport]
+    annotation,  # pyright: ignore[reportUnusedImport]
+    app,  # pyright: ignore[reportUnusedImport]
+    audio,  # pyright: ignore[reportUnusedImport]
+    completion,  # pyright: ignore[reportUnusedImport]
+    conversation,  # pyright: ignore[reportUnusedImport]
+    conversation_variables,  # pyright: ignore[reportUnusedImport]
+    generator,  # pyright: ignore[reportUnusedImport]
+    mcp_server,  # pyright: ignore[reportUnusedImport]
+    message,  # pyright: ignore[reportUnusedImport]
+    model_config,  # pyright: ignore[reportUnusedImport]
+    ops_trace,  # pyright: ignore[reportUnusedImport]
+    site,  # pyright: ignore[reportUnusedImport]
+    statistic,  # pyright: ignore[reportUnusedImport]
+    workflow,  # pyright: ignore[reportUnusedImport]
+    workflow_app_log,  # pyright: ignore[reportUnusedImport]
+    workflow_draft_variable,  # pyright: ignore[reportUnusedImport]
+    workflow_run,  # pyright: ignore[reportUnusedImport]
+    workflow_statistic,  # pyright: ignore[reportUnusedImport]
+)
 
 # Import auth controllers
+from .auth import (
+    activate,  # pyright: ignore[reportUnusedImport]
+    data_source_bearer_auth,  # pyright: ignore[reportUnusedImport]
+    data_source_oauth,  # pyright: ignore[reportUnusedImport]
+    forgot_password,  # pyright: ignore[reportUnusedImport]
+    login,  # pyright: ignore[reportUnusedImport]
+    oauth,  # pyright: ignore[reportUnusedImport]
+    oauth_server,  # pyright: ignore[reportUnusedImport]
+)
 
 # Import billing controllers
+from .billing import billing, compliance  # pyright: ignore[reportUnusedImport]
 
 # Import datasets controllers
+from .datasets import (
+    data_source,  # pyright: ignore[reportUnusedImport]
+    datasets,  # pyright: ignore[reportUnusedImport]
+    datasets_document,  # pyright: ignore[reportUnusedImport]
+    datasets_segments,  # pyright: ignore[reportUnusedImport]
+    external,  # pyright: ignore[reportUnusedImport]
+    hit_testing,  # pyright: ignore[reportUnusedImport]
+    metadata,  # pyright: ignore[reportUnusedImport]
+    website,  # pyright: ignore[reportUnusedImport]
+)
 
 # Import explore controllers
+from .explore import (
+    installed_app,  # pyright: ignore[reportUnusedImport]
+    parameter,  # pyright: ignore[reportUnusedImport]
+    recommended_app,  # pyright: ignore[reportUnusedImport]
+    saved_message,  # pyright: ignore[reportUnusedImport]
+)
 
 # Explore Audio
-api.add_resource(ChatAudioApi, "/installed-apps/<uuid:installed_app_id>/audio-to-text",
-                 endpoint="installed_app_audio")
-api.add_resource(ChatTextApi, "/installed-apps/<uuid:installed_app_id>/text-to-audio",
-                 endpoint="installed_app_text")
+api.add_resource(ChatAudioApi, "/installed-apps/<uuid:installed_app_id>/audio-to-text", endpoint="installed_app_audio")
+api.add_resource(ChatTextApi, "/installed-apps/<uuid:installed_app_id>/text-to-audio", endpoint="installed_app_text")
 
 # Explore Completion
 api.add_resource(
@@ -170,8 +152,7 @@ api.add_resource(
 
 
 # Explore Message
-api.add_resource(MessageListApi, "/installed-apps/<uuid:installed_app_id>/messages",
-                 endpoint="installed_app_messages")
+api.add_resource(MessageListApi, "/installed-apps/<uuid:installed_app_id>/messages", endpoint="installed_app_messages")
 api.add_resource(
     MessageFeedbackApi,
     "/installed-apps/<uuid:installed_app_id>/messages/<uuid:message_id>/feedbacks",
@@ -188,12 +169,24 @@ api.add_resource(
     endpoint="installed_app_suggested_question",
 )
 # Explore Workflow
-api.add_resource(InstalledAppWorkflowRunApi,
-                 "/installed-apps/<uuid:installed_app_id>/workflows/run")
+api.add_resource(InstalledAppWorkflowRunApi, "/installed-apps/<uuid:installed_app_id>/workflows/run")
 api.add_resource(
     InstalledAppWorkflowTaskStopApi, "/installed-apps/<uuid:installed_app_id>/workflows/tasks/<string:task_id>/stop"
 )
 
 # Import tag controllers
+from .tag import tags  # pyright: ignore[reportUnusedImport]
 
 # Import workspace controllers
+from .workspace import (
+    account,  # pyright: ignore[reportUnusedImport]
+    agent_providers,  # pyright: ignore[reportUnusedImport]
+    endpoint,  # pyright: ignore[reportUnusedImport]
+    load_balancing_config,  # pyright: ignore[reportUnusedImport]
+    members,  # pyright: ignore[reportUnusedImport]
+    model_providers,  # pyright: ignore[reportUnusedImport]
+    models,  # pyright: ignore[reportUnusedImport]
+    plugin,  # pyright: ignore[reportUnusedImport]
+    tool_providers,  # pyright: ignore[reportUnusedImport]
+    workspace,  # pyright: ignore[reportUnusedImport]
+)
