@@ -20,7 +20,7 @@ from libs.helper import email, extract_remote_ip
 from libs.password import valid_password
 from models.account import Account
 from services.account_service import AccountService
-from services.errors.account import AccountRegisterError
+from services.errors.account import AccountNotFoundError, AccountRegisterError
 from services.errors.workspace import WorkSpaceNotAllowedCreateError, WorkspacesLimitExceededError
 
 
@@ -46,13 +46,8 @@ class EmailRegisterSendEmailApi(Resource):
         with Session(db.engine) as session:
             account = session.execute(select(Account).filter_by(email=args["email"])).scalar_one_or_none()
         token = None
-        if account is None:
-            token = AccountService.send_email_register_email(email=args["email"], language=language)
-            return {"result": "success", "data": token}
-
-        else:
-            token = AccountService.send_email_register_email(account=account, email=args["email"], language=language)
-            return {"result": "success", "data": token}
+        token = AccountService.send_email_register_email(email=args["email"], account=account, language=language)
+        return {"result": "success", "data": token}
 
 
 class EmailRegisterCheckApi(Resource):
@@ -130,13 +125,16 @@ class EmailRegisterResetApi(Resource):
                 raise EmailAlreadyInUseError()
             else:
                 account = self._create_new_account(email, args["password_confirm"])
+                if not account:
+                    raise AccountNotFoundError()
                 token_pair = AccountService.login(account=account, ip_address=extract_remote_ip(request))
                 AccountService.reset_login_error_rate_limit(email)
 
         return {"result": "success", "data": token_pair.model_dump()}
 
-    def _create_new_account(self, email, password):
+    def _create_new_account(self, email, password) -> Account | None:
         # Create new account if allowed
+        account = None
         try:
             account = AccountService.create_account_and_tenant(
                 email=email,

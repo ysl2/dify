@@ -87,8 +87,7 @@ def cloud_edition_billing_resource_check(resource: str):
     def interceptor(view: Callable[P, R]):
         @wraps(view)
         def decorated(*args: P.args, **kwargs: P.kwargs):
-            features = FeatureService.get_features(
-                current_user.current_tenant_id)
+            features = FeatureService.get_features(current_user.current_tenant_id)
             if features.billing.enabled:
                 members = features.members
                 apps = features.apps
@@ -96,11 +95,9 @@ def cloud_edition_billing_resource_check(resource: str):
                 documents_upload_quota = features.documents_upload_quota
                 annotation_quota_limit = features.annotation_quota_limit
                 if resource == "members" and 0 < members.limit <= members.size:
-                    abort(
-                        403, "The number of members has reached the limit of your subscription.")
+                    abort(403, "The number of members has reached the limit of your subscription.")
                 elif resource == "apps" and 0 < apps.limit <= apps.size:
-                    abort(
-                        403, "The number of apps has reached the limit of your subscription.")
+                    abort(403, "The number of apps has reached the limit of your subscription.")
                 elif resource == "vector_space" and 0 < vector_space.limit <= vector_space.size:
                     abort(
                         403, "The capacity of the knowledge storage space has reached the limit of your subscription."
@@ -110,16 +107,13 @@ def cloud_edition_billing_resource_check(resource: str):
                     # so we need to check the source of the request from datasets
                     source = request.args.get("source")
                     if source == "datasets":
-                        abort(
-                            403, "The number of documents has reached the limit of your subscription.")
+                        abort(403, "The number of documents has reached the limit of your subscription.")
                     else:
                         return view(*args, **kwargs)
                 elif resource == "workspace_custom" and not features.can_replace_logo:
-                    abort(
-                        403, "The workspace custom feature has reached the limit of your subscription.")
+                    abort(403, "The workspace custom feature has reached the limit of your subscription.")
                 elif resource == "annotation" and 0 < annotation_quota_limit.limit < annotation_quota_limit.size:
-                    abort(
-                        403, "The annotation quota has reached the limit of your subscription.")
+                    abort(403, "The annotation quota has reached the limit of your subscription.")
                 else:
                     return view(*args, **kwargs)
 
@@ -134,8 +128,7 @@ def cloud_edition_billing_knowledge_limit_check(resource: str):
     def interceptor(view: Callable[P, R]):
         @wraps(view)
         def decorated(*args: P.args, **kwargs: P.kwargs):
-            features = FeatureService.get_features(
-                current_user.current_tenant_id)
+            features = FeatureService.get_features(current_user.current_tenant_id)
             if features.billing.enabled:
                 if resource == "add_segment":
                     if features.billing.subscription.plan == "sandbox":
@@ -158,8 +151,7 @@ def cloud_edition_billing_rate_limit_check(resource: str):
         @wraps(view)
         def decorated(*args: P.args, **kwargs: P.kwargs):
             if resource == "knowledge":
-                knowledge_rate_limit = FeatureService.get_knowledge_rate_limit(
-                    current_user.current_tenant_id)
+                knowledge_rate_limit = FeatureService.get_knowledge_rate_limit(current_user.current_tenant_id)
                 if knowledge_rate_limit.enabled:
                     current_time = int(time.time() * 1000)
                     key = f"rate_limit_{current_user.current_tenant_id}"
@@ -193,16 +185,14 @@ def cloud_utm_record(view: Callable[P, R]):
     @wraps(view)
     def decorated(*args: P.args, **kwargs: P.kwargs):
         with contextlib.suppress(Exception):
-            features = FeatureService.get_features(
-                current_user.current_tenant_id)
+            features = FeatureService.get_features(current_user.current_tenant_id)
 
             if features.billing.enabled:
                 utm_info = request.cookies.get("utm_info")
 
                 if utm_info:
                     utm_info_dict: dict = json.loads(utm_info)
-                    OperationService.record_utm(
-                        current_user.current_tenant_id, utm_info_dict)
+                    OperationService.record_utm(current_user.current_tenant_id, utm_info_dict)
 
         return view(*args, **kwargs)
 
@@ -232,8 +222,7 @@ def enterprise_license_required(view: Callable[P, R]):
     def decorated(*args: P.args, **kwargs: P.kwargs):
         settings = FeatureService.get_system_features()
         if settings.license.status in [LicenseStatus.INACTIVE, LicenseStatus.EXPIRED, LicenseStatus.LOST]:
-            raise UnauthorizedAndForceLogout(
-                "Your license is invalid. Please contact your administrator.")
+            raise UnauthorizedAndForceLogout("Your license is invalid. Please contact your administrator.")
 
         return view(*args, **kwargs)
 
