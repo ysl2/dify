@@ -1,7 +1,7 @@
 from collections.abc import Mapping, Sequence
 from datetime import datetime
-from enum import StrEnum, auto
-from typing import Any, Optional
+from enum import Enum, StrEnum
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -626,15 +626,15 @@ class QueueStopEvent(AppQueueEvent):
     QueueStopEvent entity
     """
 
-    class StopBy(StrEnum):
+    class StopBy(Enum):
         """
         Stop by enum
         """
 
-        USER_MANUAL = auto()
-        ANNOTATION_REPLY = auto()
-        OUTPUT_MODERATION = auto()
-        INPUT_MODERATION = auto()
+        USER_MANUAL = "user-manual"
+        ANNOTATION_REPLY = "annotation-reply"
+        OUTPUT_MODERATION = "output-moderation"
+        INPUT_MODERATION = "input-moderation"
 
     event: QueueEvent = QueueEvent.STOP
     stopped_by: StopBy

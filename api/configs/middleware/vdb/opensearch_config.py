@@ -1,5 +1,5 @@
-from enum import Enum
-from typing import Literal, Optional
+import enum
+from typing import Literal
 
 from pydantic import Field, PositiveInt
 from pydantic_settings import BaseSettings
@@ -10,7 +10,7 @@ class OpenSearchConfig(BaseSettings):
     Configuration settings for OpenSearch
     """
 
-    class AuthMethod(Enum):
+    class AuthMethod(enum.StrEnum):
         """
         Authentication method for OpenSearch
         """

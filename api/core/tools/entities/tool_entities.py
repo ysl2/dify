@@ -1,8 +1,9 @@
 import base64
 import contextlib
+import enum
 from collections.abc import Mapping
-from enum import StrEnum, auto
-from typing import Any, Optional, Union
+from enum import Enum
+from typing import Any, Union
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_serializer, field_validator, model_validator
 
@@ -21,37 +22,37 @@ from core.tools.entities.common_entities import I18nObject
 from core.tools.entities.constants import TOOL_SELECTOR_MODEL_IDENTITY
 
 
-class ToolLabelEnum(StrEnum):
-    SEARCH = auto()
-    IMAGE = auto()
-    VIDEOS = auto()
-    WEATHER = auto()
-    FINANCE = auto()
-    DESIGN = auto()
-    TRAVEL = auto()
-    SOCIAL = auto()
-    NEWS = auto()
-    MEDICAL = auto()
-    PRODUCTIVITY = auto()
-    EDUCATION = auto()
-    BUSINESS = auto()
-    ENTERTAINMENT = auto()
-    UTILITIES = auto()
-    OTHER = auto()
+class ToolLabelEnum(Enum):
+    SEARCH = "search"
+    IMAGE = "image"
+    VIDEOS = "videos"
+    WEATHER = "weather"
+    FINANCE = "finance"
+    DESIGN = "design"
+    TRAVEL = "travel"
+    SOCIAL = "social"
+    NEWS = "news"
+    MEDICAL = "medical"
+    PRODUCTIVITY = "productivity"
+    EDUCATION = "education"
+    BUSINESS = "business"
+    ENTERTAINMENT = "entertainment"
+    UTILITIES = "utilities"
+    OTHER = "other"
 
 
-class ToolProviderType(StrEnum):
+class ToolProviderType(enum.StrEnum):
     """
     Enum class for tool provider
     """
 
-    PLUGIN = auto()
+    PLUGIN = "plugin"
     BUILT_IN = "builtin"
-    WORKFLOW = auto()
-    API = auto()
-    APP = auto()
+    WORKFLOW = "workflow"
+    API = "api"
+    APP = "app"
     DATASET_RETRIEVAL = "dataset-retrieval"
-    MCP = auto()
+    MCP = "mcp"
 
     @classmethod
     def value_of(cls, value: str) -> "ToolProviderType":
@@ -67,15 +68,15 @@ class ToolProviderType(StrEnum):
         raise ValueError(f"invalid mode value {value}")
 
 
-class ApiProviderSchemaType(StrEnum):
+class ApiProviderSchemaType(Enum):
     """
     Enum class for api provider schema type.
     """
 
-    OPENAPI = auto()
-    SWAGGER = auto()
-    OPENAI_PLUGIN = auto()
-    OPENAI_ACTIONS = auto()
+    OPENAPI = "openapi"
+    SWAGGER = "swagger"
+    OPENAI_PLUGIN = "openai_plugin"
+    OPENAI_ACTIONS = "openai_actions"
 
     @classmethod
     def value_of(cls, value: str) -> "ApiProviderSchemaType":
@@ -91,14 +92,14 @@ class ApiProviderSchemaType(StrEnum):
         raise ValueError(f"invalid mode value {value}")
 
 
-class ApiProviderAuthType(StrEnum):
+class ApiProviderAuthType(Enum):
     """
     Enum class for api provider auth type.
     """
 
-    NONE = auto()
-    API_KEY_HEADER = auto()
-    API_KEY_QUERY = auto()
+    NONE = "none"
+    API_KEY_HEADER = "api_key_header"
+    API_KEY_QUERY = "api_key_query"
 
     @classmethod
     def value_of(cls, value: str) -> "ApiProviderAuthType":
@@ -175,10 +176,10 @@ class ToolInvokeMessage(BaseModel):
             return value
 
     class LogMessage(BaseModel):
-        class LogStatus(StrEnum):
-            START = auto()
-            ERROR = auto()
-            SUCCESS = auto()
+        class LogStatus(Enum):
+            START = "start"
+            ERROR = "error"
+            SUCCESS = "success"
 
         id: str
         label: str = Field(..., description="The label of the log")
@@ -192,19 +193,19 @@ class ToolInvokeMessage(BaseModel):
         retriever_resources: list[RetrievalSourceMetadata] = Field(..., description="retriever resources")
         context: str = Field(..., description="context")
 
-    class MessageType(StrEnum):
-        TEXT = auto()
-        IMAGE = auto()
-        LINK = auto()
-        BLOB = auto()
-        JSON = auto()
-        IMAGE_LINK = auto()
-        BINARY_LINK = auto()
-        VARIABLE = auto()
-        FILE = auto()
-        LOG = auto()
-        BLOB_CHUNK = auto()
-        RETRIEVER_RESOURCES = auto()
+    class MessageType(Enum):
+        TEXT = "text"
+        IMAGE = "image"
+        LINK = "link"
+        BLOB = "blob"
+        JSON = "json"
+        IMAGE_LINK = "image_link"
+        BINARY_LINK = "binary_link"
+        VARIABLE = "variable"
+        FILE = "file"
+        LOG = "log"
+        BLOB_CHUNK = "blob_chunk"
+        RETRIEVER_RESOURCES = "retriever_resources"
 
     type: MessageType = MessageType.TEXT
     """
@@ -249,29 +250,29 @@ class ToolParameter(PluginParameter):
     Overrides type
     """
 
-    class ToolParameterType(StrEnum):
+    class ToolParameterType(enum.StrEnum):
         """
         removes TOOLS_SELECTOR from PluginParameterType
         """
 
-        STRING = PluginParameterType.STRING
-        NUMBER = PluginParameterType.NUMBER
-        BOOLEAN = PluginParameterType.BOOLEAN
-        SELECT = PluginParameterType.SELECT
-        SECRET_INPUT = PluginParameterType.SECRET_INPUT
-        FILE = PluginParameterType.FILE
-        FILES = PluginParameterType.FILES
-        APP_SELECTOR = PluginParameterType.APP_SELECTOR
-        MODEL_SELECTOR = PluginParameterType.MODEL_SELECTOR
-        ANY = PluginParameterType.ANY
-        DYNAMIC_SELECT = PluginParameterType.DYNAMIC_SELECT
+        STRING = PluginParameterType.STRING.value
+        NUMBER = PluginParameterType.NUMBER.value
+        BOOLEAN = PluginParameterType.BOOLEAN.value
+        SELECT = PluginParameterType.SELECT.value
+        SECRET_INPUT = PluginParameterType.SECRET_INPUT.value
+        FILE = PluginParameterType.FILE.value
+        FILES = PluginParameterType.FILES.value
+        APP_SELECTOR = PluginParameterType.APP_SELECTOR.value
+        MODEL_SELECTOR = PluginParameterType.MODEL_SELECTOR.value
+        ANY = PluginParameterType.ANY.value
+        DYNAMIC_SELECT = PluginParameterType.DYNAMIC_SELECT.value
 
         # MCP object and array type parameters
-        ARRAY = MCPServerParameterType.ARRAY
-        OBJECT = MCPServerParameterType.OBJECT
+        ARRAY = MCPServerParameterType.ARRAY.value
+        OBJECT = MCPServerParameterType.OBJECT.value
 
         # deprecated, should not use.
-        SYSTEM_FILES = PluginParameterType.SYSTEM_FILES
+        SYSTEM_FILES = PluginParameterType.SYSTEM_FILES.value
 
         def as_normal_type(self):
             return as_normal_type(self)
@@ -279,10 +280,10 @@ class ToolParameter(PluginParameter):
         def cast_value(self, value: Any):
             return cast_parameter_value(self, value)
 
-    class ToolParameterForm(StrEnum):
-        SCHEMA = auto()  # should be set while adding tool
-        FORM = auto()  # should be set before invoking tool
-        LLM = auto()  # will be set by LLM
+    class ToolParameterForm(Enum):
+        SCHEMA = "schema"  # should be set while adding tool
+        FORM = "form"  # should be set before invoking tool
+        LLM = "llm"  # will be set by LLM
 
     type: ToolParameterType = Field(..., description="The type of the parameter")
     human_description: I18nObject | None = Field(default=None, description="The description presented to the user")
@@ -445,14 +446,14 @@ class ToolLabel(BaseModel):
     icon: str = Field(..., description="The icon of the tool")
 
 
-class ToolInvokeFrom(StrEnum):
+class ToolInvokeFrom(Enum):
     """
     Enum class for tool invoke
     """
 
-    WORKFLOW = auto()
-    AGENT = auto()
-    PLUGIN = auto()
+    WORKFLOW = "workflow"
+    AGENT = "agent"
+    PLUGIN = "plugin"
 
 
 class ToolSelector(BaseModel):
@@ -477,9 +478,9 @@ class ToolSelector(BaseModel):
         return self.model_dump()
 
 
-class CredentialType(StrEnum):
+class CredentialType(enum.StrEnum):
     API_KEY = "api-key"
-    OAUTH2 = auto()
+    OAUTH2 = "oauth2"
 
     def get_name(self):
         if self == CredentialType.API_KEY:

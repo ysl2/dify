@@ -1,5 +1,5 @@
-from enum import StrEnum, auto
-from typing import Optional, Union
+from enum import Enum
+from typing import Union
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -13,14 +13,14 @@ from core.model_runtime.entities.model_entities import ModelType
 from core.tools.entities.common_entities import I18nObject
 
 
-class ProviderQuotaType(StrEnum):
-    PAID = auto()
+class ProviderQuotaType(Enum):
+    PAID = "paid"
     """hosted paid quota"""
 
-    FREE = auto()
+    FREE = "free"
     """third-party free quota"""
 
-    TRIAL = auto()
+    TRIAL = "trial"
     """hosted trial quota"""
 
     @staticmethod
@@ -31,20 +31,20 @@ class ProviderQuotaType(StrEnum):
         raise ValueError(f"No matching enum found for value '{value}'")
 
 
-class QuotaUnit(StrEnum):
-    TIMES = auto()
-    TOKENS = auto()
-    CREDITS = auto()
+class QuotaUnit(Enum):
+    TIMES = "times"
+    TOKENS = "tokens"
+    CREDITS = "credits"
 
 
-class SystemConfigurationStatus(StrEnum):
+class SystemConfigurationStatus(Enum):
     """
     Enum class for system configuration status.
     """
 
-    ACTIVE = auto()
+    ACTIVE = "active"
     QUOTA_EXCEEDED = "quota-exceeded"
-    UNSUPPORTED = auto()
+    UNSUPPORTED = "unsupported"
 
 
 class RestrictModel(BaseModel):
@@ -168,14 +168,14 @@ class BasicProviderConfig(BaseModel):
     Base model class for common provider settings like credentials
     """
 
-    class Type(StrEnum):
-        SECRET_INPUT = CommonParameterType.SECRET_INPUT
-        TEXT_INPUT = CommonParameterType.TEXT_INPUT
-        SELECT = CommonParameterType.SELECT
-        BOOLEAN = CommonParameterType.BOOLEAN
-        APP_SELECTOR = CommonParameterType.APP_SELECTOR
-        MODEL_SELECTOR = CommonParameterType.MODEL_SELECTOR
-        TOOLS_SELECTOR = CommonParameterType.TOOLS_SELECTOR
+    class Type(Enum):
+        SECRET_INPUT = CommonParameterType.SECRET_INPUT.value
+        TEXT_INPUT = CommonParameterType.TEXT_INPUT.value
+        SELECT = CommonParameterType.SELECT.value
+        BOOLEAN = CommonParameterType.BOOLEAN.value
+        APP_SELECTOR = CommonParameterType.APP_SELECTOR.value
+        MODEL_SELECTOR = CommonParameterType.MODEL_SELECTOR.value
+        TOOLS_SELECTOR = CommonParameterType.TOOLS_SELECTOR.value
 
         @classmethod
         def value_of(cls, value: str) -> "ProviderConfig.Type":

@@ -1,20 +1,20 @@
 from abc import ABC
 from collections.abc import Mapping, Sequence
-from enum import StrEnum, auto
-from typing import Annotated, Any, Literal, Optional, Union
+from enum import Enum, StrEnum
+from typing import Annotated, Any, Literal, Union
 
 from pydantic import BaseModel, Field, field_serializer, field_validator
 
 
-class PromptMessageRole(StrEnum):
+class PromptMessageRole(Enum):
     """
     Enum class for prompt message.
     """
 
-    SYSTEM = auto()
-    USER = auto()
-    ASSISTANT = auto()
-    TOOL = auto()
+    SYSTEM = "system"
+    USER = "user"
+    ASSISTANT = "assistant"
+    TOOL = "tool"
 
     @classmethod
     def value_of(cls, value: str) -> "PromptMessageRole":
@@ -54,11 +54,11 @@ class PromptMessageContentType(StrEnum):
     Enum class for prompt message content type.
     """
 
-    TEXT = auto()
-    IMAGE = auto()
-    AUDIO = auto()
-    VIDEO = auto()
-    DOCUMENT = auto()
+    TEXT = "text"
+    IMAGE = "image"
+    AUDIO = "audio"
+    VIDEO = "video"
+    DOCUMENT = "document"
 
 
 class PromptMessageContent(ABC, BaseModel):
@@ -108,8 +108,8 @@ class ImagePromptMessageContent(MultiModalPromptMessageContent):
     """
 
     class DETAIL(StrEnum):
-        LOW = auto()
-        HIGH = auto()
+        LOW = "low"
+        HIGH = "high"
 
     type: Literal[PromptMessageContentType.IMAGE] = PromptMessageContentType.IMAGE
     detail: DETAIL = DETAIL.LOW

@@ -2,8 +2,8 @@ import json
 import logging
 from collections.abc import Mapping, Sequence
 from datetime import datetime
-from enum import StrEnum, auto
-from typing import TYPE_CHECKING, Any, Optional, Union, cast
+from enum import Enum, StrEnum
+from typing import TYPE_CHECKING, Any, Union, cast
 from uuid import uuid4
 
 import sqlalchemy as sa
@@ -41,13 +41,13 @@ from .types import EnumText, StringUUID
 logger = logging.getLogger(__name__)
 
 
-class WorkflowType(StrEnum):
+class WorkflowType(Enum):
     """
     Workflow Type Enum
     """
 
-    WORKFLOW = auto()
-    CHAT = auto()
+    WORKFLOW = "workflow"
+    CHAT = "chat"
 
     @classmethod
     def value_of(cls, value: str) -> "WorkflowType":
@@ -777,7 +777,7 @@ class WorkflowNodeExecutionModel(Base):
         return extras
 
 
-class WorkflowAppLogCreatedFrom(StrEnum):
+class WorkflowAppLogCreatedFrom(Enum):
     """
     Workflow App Log Created From Enum
     """
