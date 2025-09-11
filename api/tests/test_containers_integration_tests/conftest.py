@@ -455,5 +455,7 @@ def db_session_with_containers(flask_app_with_containers) -> Generator[Session, 
         try:
             yield session
         finally:
+            # FIXME(-LAN-): Ensure proper test isolation by rolling back transaction
+            session.rollback()
             session.close()
-            logger.debug("Database session closed")
+            logger.debug("Database session rolled back and closed")
