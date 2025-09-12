@@ -56,7 +56,8 @@ from core.workflow.nodes.llm.node import LLMNode
 from extensions.ext_database import db
 from extensions.ext_redis import redis_client
 from libs.json_in_md_parser import parse_and_check_json_markdown
-from models.dataset import Dataset, DatasetMetadata, Document, RateLimitLog
+from models.dataset import Dataset, DatasetMetadata, RateLimitLog
+from models.dataset import Document as DatasetDocument
 from services.feature_service import FeatureService
 
 from .entities import KnowledgeRetrievalNodeData
@@ -227,15 +228,17 @@ class KnowledgeRetrievalNode(BaseNode):
 
         # Subquery: Count the number of available documents for each dataset
         subquery = (
-            db.session.query(Document.dataset_id, func.count(Document.id).label("available_document_count"))
-            .where(
-                Document.indexing_status == "completed",
-                Document.enabled == True,
-                Document.archived == False,
-                Document.dataset_id.in_(dataset_ids),
+            db.session.query(
+                DatasetDocument.dataset_id, func.count(DatasetDocument.id).label("available_document_count")
             )
-            .group_by(Document.dataset_id)
-            .having(func.count(Document.id) > 0)
+            .where(
+                DatasetDocument.indexing_status == "completed",
+                DatasetDocument.enabled == True,
+                DatasetDocument.archived == False,
+                DatasetDocument.dataset_id.in_(dataset_ids),
+            )
+            .group_by(DatasetDocument.dataset_id)
+            .having(func.count(DatasetDocument.id) > 0)
             .subquery()
         )
 
@@ -368,10 +371,10 @@ class KnowledgeRetrievalNode(BaseNode):
                 for record in records:
                     segment = record.segment
                     dataset = db.session.query(Dataset).filter_by(id=segment.dataset_id).first()  # type: ignore
-                    stmt = select(Document).where(
-                        Document.id == segment.document_id,
-                        Document.enabled == True,
-                        Document.archived == False,
+                    stmt = select(DatasetDocument).where(
+                        DatasetDocument.id == segment.document_id,
+                        DatasetDocument.enabled == True,
+                        DatasetDocument.archived == False,
                     )
                     document = db.session.scalar(stmt)
                     if dataset and document:
@@ -421,11 +424,11 @@ class KnowledgeRetrievalNode(BaseNode):
     def _get_metadata_filter_condition(
         self, dataset_ids: list, query: str, node_data: KnowledgeRetrievalNodeData
     ) -> tuple[dict[str, list[str]] | None, MetadataCondition | None]:
-        document_query = db.session.query(Document).where(
-            Document.dataset_id.in_(dataset_ids),
-            Document.indexing_status == "completed",
-            Document.enabled == True,
-            Document.archived == False,
+        document_query = db.session.query(DatasetDocument).where(
+            DatasetDocument.dataset_id.in_(dataset_ids),
+            DatasetDocument.indexing_status == "completed",
+            DatasetDocument.enabled == True,
+            DatasetDocument.archived == False,
         )
         filters = []  # type: ignore
         metadata_condition = None
@@ -633,26 +636,26 @@ class KnowledgeRetrievalNode(BaseNode):
                 )
             case "=" | "is":
                 if isinstance(value, str):
-                    filters.append(Document.doc_metadata[metadata_name] == f'"{value}"')
+                    filters.append(DatasetDocument.doc_metadata[metadata_name] == f'"{value}"')
                 else:
-                    filters.append(sqlalchemy_cast(Document.doc_metadata[metadata_name].astext, Float) == value)
+                    filters.append(sqlalchemy_cast(DatasetDocument.doc_metadata[metadata_name].astext, Float) == value)
             case "is not" | "≠":
                 if isinstance(value, str):
-                    filters.append(Document.doc_metadata[metadata_name] != f'"{value}"')
+                    filters.append(DatasetDocument.doc_metadata[metadata_name] != f'"{value}"')
                 else:
-                    filters.append(sqlalchemy_cast(Document.doc_metadata[metadata_name].astext, Float) != value)
+                    filters.append(sqlalchemy_cast(DatasetDocument.doc_metadata[metadata_name].astext, Float) != value)
             case "empty":
-                filters.append(Document.doc_metadata[metadata_name].is_(None))
+                filters.append(DatasetDocument.doc_metadata[metadata_name].is_(None))
             case "not empty":
-                filters.append(Document.doc_metadata[metadata_name].isnot(None))
+                filters.append(DatasetDocument.doc_metadata[metadata_name].isnot(None))
             case "before" | "<":
-                filters.append(sqlalchemy_cast(Document.doc_metadata[metadata_name].astext, Float) < value)
+                filters.append(sqlalchemy_cast(DatasetDocument.doc_metadata[metadata_name].astext, Float) < value)
             case "after" | ">":
-                filters.append(sqlalchemy_cast(Document.doc_metadata[metadata_name].astext, Float) > value)
+                filters.append(sqlalchemy_cast(DatasetDocument.doc_metadata[metadata_name].astext, Float) > value)
             case "≤" | "<=":
-                filters.append(sqlalchemy_cast(Document.doc_metadata[metadata_name].astext, Float) <= value)
+                filters.append(sqlalchemy_cast(DatasetDocument.doc_metadata[metadata_name].astext, Float) <= value)
             case "≥" | ">=":
-                filters.append(sqlalchemy_cast(Document.doc_metadata[metadata_name].astext, Float) >= value)
+                filters.append(sqlalchemy_cast(DatasetDocument.doc_metadata[metadata_name].astext, Float) >= value)
             case _:
                 pass
         return filters
