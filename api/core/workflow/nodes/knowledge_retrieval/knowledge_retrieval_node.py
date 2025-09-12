@@ -345,7 +345,7 @@ class KnowledgeRetrievalNode(BaseNode):
             )
         dify_documents = [item for item in all_documents if item.provider == "dify"]
         external_documents = [item for item in all_documents if item.provider == "external"]
-        retrieval_resource_list = []
+        retrieval_resource_list: list[dict[str, Any]] = []
         # deal with external documents
         for item in external_documents:
             source = {
@@ -414,11 +414,12 @@ class KnowledgeRetrievalNode(BaseNode):
         if retrieval_resource_list:
             retrieval_resource_list = sorted(
                 retrieval_resource_list,
-                key=lambda x: x["metadata"]["score"] if x["metadata"].get("score") is not None else 0.0,
+                key=lambda x: float(x.get("metadata", {}).get("score", 0.0)),
                 reverse=True,
             )
-            for position, item in enumerate(retrieval_resource_list, start=1):
-                item["metadata"]["position"] = position
+            for position, resource_item in enumerate(retrieval_resource_list, start=1):
+                if "metadata" in resource_item:
+                    resource_item["metadata"]["position"] = position
         return retrieval_resource_list
 
     def _get_metadata_filter_condition(
