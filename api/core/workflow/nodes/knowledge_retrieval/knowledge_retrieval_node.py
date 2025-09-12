@@ -26,6 +26,7 @@ from core.model_runtime.model_providers.__base.large_language_model import Large
 from core.prompt.simple_prompt_transform import ModelMode
 from core.rag.datasource.retrieval_service import RetrievalService
 from core.rag.entities.metadata_entities import Condition, MetadataCondition
+from core.rag.models.document import Document
 from core.rag.retrieval.dataset_retrieval import DatasetRetrieval
 from core.rag.retrieval.retrieval_methods import RetrievalMethod
 from core.variables import (
@@ -257,7 +258,7 @@ class KnowledgeRetrievalNode(BaseNode):
         metadata_filter_document_ids, metadata_condition = self._get_metadata_filter_condition(
             [dataset.id for dataset in available_datasets], query, node_data
         )
-        all_documents = []
+        all_documents: list[Document] = []
         dataset_retrieval = DatasetRetrieval()
         if node_data.retrieval_mode == DatasetRetrieveConfigEntity.RetrieveStrategy.SINGLE:
             # fetch model config
