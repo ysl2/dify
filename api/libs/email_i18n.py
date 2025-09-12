@@ -21,6 +21,7 @@ class EmailType(Enum):
     """Enumeration of supported email types."""
 
     RESET_PASSWORD = "reset_password"
+    RESET_PASSWORD_WHEN_ACCOUNT_NOT_EXIST = "reset_password_when_account_not_exist"
     INVITE_MEMBER = "invite_member"
     EMAIL_CODE_LOGIN = "email_code_login"
     CHANGE_EMAIL_OLD = "change_email_old"
@@ -34,6 +35,9 @@ class EmailType(Enum):
     ENTERPRISE_CUSTOM = "enterprise_custom"
     QUEUE_MONITOR_ALERT = "queue_monitor_alert"
     DOCUMENT_CLEAN_NOTIFY = "document_clean_notify"
+    EMAIL_REGISTER = "email_register"
+    EMAIL_REGISTER_WHEN_ACCOUNT_EXIST = "email_register_when_account_exist"
+    RESET_PASSWORD_WHEN_ACCOUNT_NOT_EXIST_NO_REGISTER = "reset_password_when_account_not_exist_no_register"
 
 
 class EmailLanguage(Enum):
@@ -128,7 +132,7 @@ class FeatureBrandingService:
 class EmailSender(Protocol):
     """Protocol for email sending abstraction."""
 
-    def send_email(self, to: str, subject: str, html_content: str) -> None:
+    def send_email(self, to: str, subject: str, html_content: str):
         """Send email with given parameters."""
         ...
 
@@ -136,7 +140,7 @@ class EmailSender(Protocol):
 class FlaskMailSender:
     """Flask-Mail based email sender."""
 
-    def send_email(self, to: str, subject: str, html_content: str) -> None:
+    def send_email(self, to: str, subject: str, html_content: str):
         """Send email using Flask-Mail."""
         if mail.is_inited():
             mail.send(to=to, subject=subject, html=html_content)
@@ -156,7 +160,7 @@ class EmailI18nService:
         renderer: EmailRenderer,
         branding_service: BrandingService,
         sender: EmailSender,
-    ) -> None:
+    ):
         self._config = config
         self._renderer = renderer
         self._branding_service = branding_service
@@ -168,7 +172,7 @@ class EmailI18nService:
         language_code: str,
         to: str,
         template_context: Optional[dict[str, Any]] = None,
-    ) -> None:
+    ):
         """
         Send internationalized email with branding support.
 
@@ -192,7 +196,7 @@ class EmailI18nService:
         to: str,
         code: str,
         phase: str,
-    ) -> None:
+    ):
         """
         Send change email notification with phase-specific handling.
 
@@ -224,7 +228,7 @@ class EmailI18nService:
         to: str | list[str],
         subject: str,
         html_content: str,
-    ) -> None:
+    ):
         """
         Send a raw email directly without template processing.
 
@@ -439,6 +443,54 @@ def create_default_email_config() -> EmailI18nConfig:
                 subject="Dify 知识库自动禁用通知",
                 template_path="clean_document_job_mail_template_zh-CN.html",
                 branded_template_path="clean_document_job_mail_template_zh-CN.html",
+            ),
+        },
+        EmailType.EMAIL_REGISTER: {
+            EmailLanguage.EN_US: EmailTemplate(
+                subject="Register Your {application_title} Account",
+                template_path="register_email_template_en-US.html",
+                branded_template_path="without-brand/register_email_template_en-US.html",
+            ),
+            EmailLanguage.ZH_HANS: EmailTemplate(
+                subject="注册您的 {application_title} 账户",
+                template_path="register_email_template_zh-CN.html",
+                branded_template_path="without-brand/register_email_template_zh-CN.html",
+            ),
+        },
+        EmailType.EMAIL_REGISTER_WHEN_ACCOUNT_EXIST: {
+            EmailLanguage.EN_US: EmailTemplate(
+                subject="Register Your {application_title} Account",
+                template_path="register_email_when_account_exist_template_en-US.html",
+                branded_template_path="without-brand/register_email_when_account_exist_template_en-US.html",
+            ),
+            EmailLanguage.ZH_HANS: EmailTemplate(
+                subject="注册您的 {application_title} 账户",
+                template_path="register_email_when_account_exist_template_zh-CN.html",
+                branded_template_path="without-brand/register_email_when_account_exist_template_zh-CN.html",
+            ),
+        },
+        EmailType.RESET_PASSWORD_WHEN_ACCOUNT_NOT_EXIST: {
+            EmailLanguage.EN_US: EmailTemplate(
+                subject="Reset Your {application_title} Password",
+                template_path="reset_password_mail_when_account_not_exist_template_en-US.html",
+                branded_template_path="without-brand/reset_password_mail_when_account_not_exist_template_en-US.html",
+            ),
+            EmailLanguage.ZH_HANS: EmailTemplate(
+                subject="重置您的 {application_title} 密码",
+                template_path="reset_password_mail_when_account_not_exist_template_zh-CN.html",
+                branded_template_path="without-brand/reset_password_mail_when_account_not_exist_template_zh-CN.html",
+            ),
+        },
+        EmailType.RESET_PASSWORD_WHEN_ACCOUNT_NOT_EXIST_NO_REGISTER: {
+            EmailLanguage.EN_US: EmailTemplate(
+                subject="Reset Your {application_title} Password",
+                template_path="reset_password_mail_when_account_not_exist_no_register_template_en-US.html",
+                branded_template_path="without-brand/reset_password_mail_when_account_not_exist_no_register_template_en-US.html",
+            ),
+            EmailLanguage.ZH_HANS: EmailTemplate(
+                subject="重置您的 {application_title} 密码",
+                template_path="reset_password_mail_when_account_not_exist_no_register_template_zh-CN.html",
+                branded_template_path="without-brand/reset_password_mail_when_account_not_exist_no_register_template_zh-CN.html",
             ),
         },
     }
