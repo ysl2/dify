@@ -473,8 +473,8 @@ class AccountService:
     @classmethod
     def send_email_register_email(
         cls,
-        account: Optional[Account] = None,
-        email: Optional[str] = None,
+        account: Account | None = None,
+        email: str | None = None,
         language: str = "en-US",
     ):
         account_email = account.email if account else email
@@ -640,7 +640,7 @@ class AccountService:
     def generate_email_register_token(
         cls,
         email: str,
-        code: Optional[str] = None,
+        code: str | None = None,
         additional_data: dict[str, Any] = {},
     ):
         if not code:
@@ -704,11 +704,11 @@ class AccountService:
         return TokenManager.get_token_data(token, "reset_password")
 
     @classmethod
-    def get_email_register_data(cls, token: str) -> Optional[dict[str, Any]]:
+    def get_email_register_data(cls, token: str) -> dict[str, Any] | None:
         return TokenManager.get_token_data(token, "email_register")
 
     @classmethod
-    def get_change_email_data(cls, token: str) -> Optional[dict[str, Any]]:
+    def get_change_email_data(cls, token: str) -> dict[str, Any] | None:
         return TokenManager.get_token_data(token, "change_email")
 
     @classmethod
